@@ -80,3 +80,29 @@ class DishSchemaTest(TestCase):
         self.assertEqual(result['data']['updateDish']['dish']['name'], 'Burrata 2')
 
         self.assertEqual(Dish.objects.all().first().name, 'Burrata 2')
+
+    def test_mutation_delete_dish(self):
+        dishes = list((Dish.objects.create(name=f'item_{_}') for _ in range(3)))
+
+        self.assertTrue(Dish.objects.exists())
+        self.assertEqual(Dish.objects.all().count(), 3)
+
+        mutation = '''
+            mutation deleteDish($id: Int!) {
+                deleteDish(id: $id) {
+                    dish {
+                        id,
+                        name
+                    }
+                    ok
+                }
+            }'''
+
+        result = self.client.execute(mutation, variables={'id': dishes[2].id})
+
+        self.assertTrue(result['data']['deleteDish']['ok'])
+        self.assertEqual(result['data']['deleteDish']['dish']['name'], 'item_2')
+
+        self.assertEqual(Dish.objects.all().count(), 2)
+
+    

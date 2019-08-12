@@ -46,10 +46,24 @@ class UpdateDish(graphene.Mutation):
         ok = True
         return UpdateDish(dish=dish, ok=ok)
 
+class DeleteDish(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int()
+
+    ok = graphene.Boolean()
+    dish = graphene.Field(DishType)
+
+    def mutate(self, info, id):
+        dish = Dish.objects.get(pk=id)
+        dish.delete()
+        ok = True
+        return DeleteDish(dish=dish, ok=ok)
+
 
 class Mutation(graphene.ObjectType):
     create_dish = CreateDish.Field()
     update_dish = UpdateDish.Field()
+    delete_dish = DeleteDish.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
