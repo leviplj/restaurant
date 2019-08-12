@@ -3,15 +3,17 @@ import graphene
 from restaurant.dishes.models import Dish
 
 class DishType(graphene.ObjectType):
+    '''Dish object'''
     id = graphene.Int()
     name = graphene.String()
 
 
 class Query(graphene.ObjectType):
-    dish = graphene.Field(DishType, id=graphene.ID(required=True))
-    dishes = graphene.List(DishType)
+    dish = graphene.Field(DishType, id=graphene.Int(required=True), description='Return a dish according to the given id')
+    dishes = graphene.List(DishType, description='Return a list of all dishes')
 
     def resolve_dish(self, info, id):
+        '''always pass an object for `me` field'''
         return Dish.objects.get(pk=id)
 
     def resolve_dishes(self, info, **kwargs):
@@ -19,6 +21,9 @@ class Query(graphene.ObjectType):
 
 
 class CreateDish(graphene.Mutation):
+    '''Creates and return a dish\n
+     params name: String
+    '''
     class Arguments:
         name = graphene.String()
 
@@ -32,6 +37,9 @@ class CreateDish(graphene.Mutation):
 
 
 class UpdateDish(graphene.Mutation):
+    '''Update a dish according to the given id and return it\n
+     params id: Int, name: String
+    '''
     class Arguments:
         id = graphene.Int()
         name = graphene.String()
@@ -47,6 +55,9 @@ class UpdateDish(graphene.Mutation):
         return UpdateDish(dish=dish, ok=ok)
 
 class DeleteDish(graphene.Mutation):
+    '''Delete a dish according to the given id and return it\n
+     params id: Int
+    '''
     class Arguments:
         id = graphene.Int()
 
