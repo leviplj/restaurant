@@ -18,4 +18,38 @@ class Query(graphene.ObjectType):
         return Dish.objects.all()
 
 
-schema = graphene.Schema(query=Query)
+class CreateDish(graphene.Mutation):
+    class Arguments:
+        name = graphene.String()
+
+    ok = graphene.Boolean()
+    dish = graphene.Field(DishType)
+
+    def mutate(self, info, name):
+        dish = Dish.objects.create(name=name)
+        ok = True
+        return CreateDish(dish=dish, ok=ok)
+
+
+class UpdateDish(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int()
+        name = graphene.String()
+
+    ok = graphene.Boolean()
+    dish = graphene.Field(DishType)
+
+    def mutate(self, info, id, name):
+        dish = Dish.objects.get(pk=id)
+        dish.name = name
+        dish.save()
+        ok = True
+        return UpdateDish(dish=dish, ok=ok)
+
+
+class Mutation(graphene.ObjectType):
+    create_dish = CreateDish.Field()
+    update_dish = UpdateDish.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)

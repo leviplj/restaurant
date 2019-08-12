@@ -38,3 +38,45 @@ class DishSchemaTest(TestCase):
 
         result = self.client.execute('''query { dishes {name} }''')
         self.assertEqual(len(result['data']['dishes']), 5)
+        
+    def test_mutation_create_dish(self):
+        mutation = '''
+            mutation createDish($name: String!) {
+                createDish(name: $name) {
+                    dish {
+                        name
+                    }
+                    ok
+                }
+            }'''
+        result = self.client.execute(mutation, variables={'name': 'Burrata'})
+
+        self.assertTrue(result['data']['createDish']['ok'])
+        self.assertEqual(result['data']['createDish']['dish']['name'], 'Burrata')
+
+        self.assertTrue(Dish.objects.exists())
+        self.assertEqual(Dish.objects.all().first().name, 'Burrata')
+
+
+    def test_mutation_update_dish(self):
+        self.obj = Dish.objects.create(name='Burrata')
+        self.assertTrue(Dish.objects.exists())
+        self.assertEqual(Dish.objects.all().first().name, 'Burrata')
+
+        mutation = '''
+            mutation updateDish($id: Int!, $name: String!) {
+                updateDish(id: $id, name: $name) {
+                    dish {
+                        id,
+                        name
+                    }
+                    ok
+                }
+            }'''
+
+        result = self.client.execute(mutation, variables={'id': self.obj.id, 'name': 'Burrata 2'})
+        self.assertTrue(result['data']['updateDish']['ok'])
+        self.assertEqual(result['data']['updateDish']['dish']['id'], self.obj.id)
+        self.assertEqual(result['data']['updateDish']['dish']['name'], 'Burrata 2')
+
+        self.assertEqual(Dish.objects.all().first().name, 'Burrata 2')
