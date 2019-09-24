@@ -15,7 +15,7 @@ class DishSchemaTest(TestCase):
     def test_query_dish(self):
         self.obj = Dish.objects.create(name='Burrata')
         query = '''
-            query getDish($id: ID!) {
+            query getDish($id: Int!) {
                 dish(id: $id) {
                     name
                 }
