@@ -22,7 +22,8 @@ variables:
   vmImageName: 'ubuntu-latest'
 
   # Name of the new namespace being created to deploy the PR changes.
-  k8sNamespaceForPR: '$(system.pullRequest.sourceBranch)'
+  # k8sNamespaceForPR: '$(system.pullRequest.sourceBranch)'
+  k8sNamespaceForPR: 'default'
 
 stages:
 - stage: Build
@@ -42,6 +43,7 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+          latest
 
     - upload: manifests
       artifact: manifests
@@ -78,7 +80,7 @@ stages:
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+                $(containerRegistry)/$(imageRepository):latest
 
   - deployment: DeployPullRequest
     displayName: Deploy Pull request
@@ -119,7 +121,7 @@ stages:
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+                $(containerRegistry)/$(imageRepository):latest
 
           - task: Kubernetes@1
             name: get
