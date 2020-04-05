@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant
+spec:
+  selector:
+      matchLabels:
+        app: restaurant
+  replicas: 1
+  template:
+      metadata:
+        labels:
+            app: restaurant
+      spec:
+        containers:
+        - name: restaurant
+          image:  levipljacr.azurecr.io/restaurant:latest
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              port: 8000
+              path: /
+          livenessProbe:
+            httpGet:
+              port: 8000
+              path: /
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
