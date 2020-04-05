@@ -41,8 +41,8 @@ stages:
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
-          $(tag)
-          latest
+          - $(tag)
+          - latest
 
     - upload: manifests
       artifact: manifests
@@ -75,7 +75,7 @@ stages:
               action: deploy
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                $(Pipeline.Workspace)/manifests/loadbalancer.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
@@ -115,8 +115,8 @@ stages:
               action: deploy
               namespace: $(k8sNamespaceForPR)
               manifests: |
-                $(Pipeline.Workspace)/k8s/deployment.yml
-                $(Pipeline.Workspace)/k8s/loadbalancer.yml
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/loadbalancer.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
