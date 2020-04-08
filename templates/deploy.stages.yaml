@@ -6,8 +6,6 @@ stages:
       - name: Project.Tag
         value: DEV
     jobs:
-      - checkout: none
-        persistCredentials: true
       - template: deploy.jobs.yaml
         parameters:
           azdsEnabled: true
