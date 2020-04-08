@@ -15,4 +15,4 @@ variables:
     value: restaurant
 
 stages:
-  - template: templates/master.yaml@templates
+  - template: templates/master.yaml
