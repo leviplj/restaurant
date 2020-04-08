@@ -4,6 +4,7 @@ parameters:
   helmNamespace: $(Helm.Namespace)
   helmRelease: $(Helm.Release)
   vmImageName: $(Pipeline.VMImageName)
+  manifestPath: $(Pipeline.Workspace)/manifests
 
 jobs:
   - deployment: Deploy
@@ -31,8 +32,8 @@ jobs:
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                ${{parameters.manifestPath}}/deployment.yml
+                ${{parameters.manifestPath}}/service.yml
               imagePullSecrets: |
                 $(Pipeline.ImagePullSecret)
               containers: |
@@ -73,8 +74,8 @@ jobs:
               action: deploy
               namespace: ${{parameters.resource}}
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                ${{parameters.manifestPath}}/deployment.yml
+                ${{parameters.manifestPath}}/service.yml
               imagePullSecrets: |
                 $(Pipeline.ImagePullSecret)
               containers: |

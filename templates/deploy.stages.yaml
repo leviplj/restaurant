@@ -6,6 +6,8 @@ stages:
       - name: Project.Tag
         value: DEV
     jobs:
+      - download: current
+        artifact: manifests
       - template: deploy.jobs.yaml
         parameters:
           azdsEnabled: true

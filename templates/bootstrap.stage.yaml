@@ -7,12 +7,14 @@ stages:
       - job: pipeline
         displayName: 'Pipeline Artifacts'
         steps:
-          - bash: ls */*
-
-          - bash: echo 'levi eh leagal'
-
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Pipeline scripts'
             inputs:
               targetPath: '$(System.DefaultWorkingDirectory)/scripts'
               artifact: scripts
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Pipeline manifests'
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/manifests'
+              artifact: manifests
