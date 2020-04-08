@@ -3,7 +3,6 @@ stages:
     displayName: 'Deploy (DEV)'
     dependsOn: buildDev
     variables:
-      - group: CorePipeline.Development
       - name: Project.Tag
         value: DEV
     jobs:
