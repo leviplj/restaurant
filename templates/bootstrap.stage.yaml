@@ -9,6 +9,8 @@ stages:
         steps:
           - bash: ls */*
 
+          - bash: echo 'levi eh leagal'
+
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Pipeline scripts'
             inputs:
