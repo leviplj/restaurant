@@ -1,0 +1,30 @@
+jobs:
+  - job: dockerBuild
+    displayName: 'Docker Image'
+    dependsOn:
+    steps:
+      # We need to download scripts as they are
+      # not downloaded for non-deployment jobs
+      - download: current
+        artifact: scripts
+      - template: bootstrap.steps.yaml
+
+      - task: Docker@2
+        displayName: 'Build Docker image'
+        inputs:
+          containerRegistry: $(Pipeline.RegistryServiceConnection)
+          repository: '$(Project.Name)'
+          command: build
+          tags: |
+            $(Project.BuildTag)
+            $(Project.Tag)
+
+      - task: Docker@2
+        displayName: 'Push Docker image'
+        inputs:
+          containerRegistry: $(Pipeline.RegistryServiceConnection)
+          repository: '$(Project.Name)'
+          command: push
+          tags: |
+            $(Project.BuildTag)
+            $(Project.Tag)

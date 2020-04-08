@@ -1,0 +1,16 @@
+stages:
+  - stage: bootstrap
+    displayName: 'Bootstrap'
+    variables:
+      - template: version.variables.yaml
+    jobs:
+      - job: job1
+        displayName: 'Do any bootstrap necessary'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        variables:
+          job_variable1: value1 # this is only available in job1
+        steps:
+        - bash: echo $(global_variable)
+        - bash: echo $(job_variable1)
+        - bash: echo $JOB_VARIABLE1

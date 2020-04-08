@@ -1,0 +1,3 @@
+variables:
+  - name: Var.Name
+    value: '1.2.3'

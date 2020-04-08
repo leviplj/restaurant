@@ -1,0 +1,14 @@
+parameters:
+  scriptPath: $(Pipeline.Workspace)/scripts
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.x'
+    inputs:
+      versionSpec: 3.x
+
+  - task: PythonScript@0
+    displayName: 'Compute Project variables'
+    inputs:
+      scriptPath: '${{parameters.scriptPath}}/compute-variables.py'
+      arguments: '$(Project.Name) $(Build.SourceBranch) $(Build.BuildNumber)'

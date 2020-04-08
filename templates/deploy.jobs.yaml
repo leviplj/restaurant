@@ -1,0 +1,98 @@
+parameters:
+  azdsEnabled: true
+  azdsSpace: $(AZDS.Space)
+  helmNamespace: $(Helm.Namespace)
+  helmRelease: $(Helm.Release)
+  vmImageName: '$(Pipeline.VMImageName)'
+
+jobs:
+  - deployment: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+    displayName: Deploy
+    pool:
+      vmImage: ${{parameters.vmImageName}}
+    environment: 'levipljrestaurant.default'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(Pipeline.ImagePullSecret)
+              dockerRegistryEndpoint: $(Pipeline.RegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/service.yml
+              imagePullSecrets: |
+                $(Pipeline.ImagePullSecret)
+              containers: |
+                $(Pipeline.ContainerRegistry)/$(Project.Name):latest
+
+  - deployment: DeployPullRequest
+    displayName: Deploy Pull request
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
+    pool:
+      vmImage: $(vmImageName)
+
+    # environment: 'levipljrestaurant.$(k8sNamespaceForPR)'
+    environment: '${{parameters.environment}}.${{parameters.resource}}'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - reviewApp: default
+
+          - task: Kubernetes@1
+            displayName: 'Create a new namespace for the pull request'
+            inputs:
+              command: apply
+              useConfigurationFile: true
+              inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
+
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(Pipeline.ImagePullSecret)
+              namespace: ${{parameters.resource}}
+              dockerRegistryEndpoint: $(Pipeline.RegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to the new namespace in the Kubernetes cluster
+            inputs:
+              action: deploy
+              namespace: ${{parameters.resource}}
+              manifests: |
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/service.yml
+              imagePullSecrets: |
+                $(Pipeline.ImagePullSecret)
+              containers: |
+                $(Pipeline.ContainerRegistry)/$(Project.Name):latest
+
+          - task: Kubernetes@1
+            name: get
+            displayName: 'Get services in the new namespace'
+            continueOnError: true
+            inputs:
+              command: get
+              namespace: ${{parameters.resource}}
+              arguments: svc
+              outputFormat: jsonpath='http://{.items[0].status.loadBalancer.ingress[0].ip}:{.items[0].spec.ports[0].port}'
+
+          # Getting the IP of the deployed service and writing it to a variable for posing comment
+          - script: |
+              url="$(get.KubectlOutput)"
+              message="Your review app has been deployed"
+              if [ ! -z "$url" -a "$url" != "http://:" ]
+              then
+                message="${message} and is available at $url.<br><br>[Learn More](https://aka.ms/testwithreviewapps) about how to test and provide feedback for the app."
+              fi
+              echo "##vso[task.setvariable variable=GITHUB_COMMENT]$message"

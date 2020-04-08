@@ -1,0 +1,14 @@
+stages:
+  - stage: development
+    displayName: 'Deploy (DEV)'
+    dependsOn: buildDev
+    variables:
+      - group: CorePipeline.Development
+      - name: Project.Tag
+        value: DEV
+    jobs:
+      - template: deploy.jobs.yaml
+        parameters:
+          azdsEnabled: true
+          environment: Development
+          resource: dev

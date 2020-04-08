@@ -1,0 +1,31 @@
+stages:
+  - stage: buildTest
+    displayName: 'Build (TEST)'
+    dependsOn: bootstrap
+    variables:
+      - name: Project.Tag
+        value: TEST
+    condition: |
+      and(
+        succeeded(),
+        or(
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/master'),
+          startsWith(variables['Build.SourceBranch'], 'refs/heads/release')
+        )
+      )
+    jobs:
+      - template: build.jobs.yaml
+
+  - stage: buildDev
+    displayName: 'Build (DEV)'
+    dependsOn: bootstrap
+    variables:
+      - name: Project.Tag
+        value: DEV
+    condition: |
+      and(
+        succeeded(),
+        not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))
+      )
+    jobs:
+      - template: build.jobs.yaml

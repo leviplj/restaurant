@@ -1,0 +1,4 @@
+stages:
+  - template: bootstrap.stage.yaml
+  - template: build.stages.yaml
+  - template: deploy.stages.yaml
