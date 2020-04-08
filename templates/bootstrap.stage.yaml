@@ -7,6 +7,8 @@ stages:
       - job: pipeline
         displayName: 'Pipeline Artifacts'
         steps:
+          - bash: echo $(global_variable)
+
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Pipeline scripts'
             inputs:
