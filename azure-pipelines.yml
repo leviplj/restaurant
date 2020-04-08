@@ -11,6 +11,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
+  - group: Pipeline
   - name: Project.Name
     value: restaurant
 
