@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
         parent = 'dev'
         parent_branch = 'master'
-        tag = re.compile('[A-Z]+-\\d+', re.I).match(branch_name).group()
+        # tag = re.compile('[A-Z]+-\\d+', re.I).match(branch_name).group()
         tag = 'azure_pipelines'
         namespace = tag.lower()
         set_variable('Project.Tag', tag)
