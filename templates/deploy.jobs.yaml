@@ -18,6 +18,10 @@ jobs:
       runOnce:
         deploy:
           steps:
+          # We need to download scripts as they are
+          # not downloaded for non-deployment jobs
+          - download: current
+            artifact: manifests
           - template: bootstrap.steps.yaml
 
           - task: KubernetesManifest@0
@@ -51,6 +55,12 @@ jobs:
       runOnce:
         deploy:
           steps:
+          # We need to download scripts as they are
+          # not downloaded for non-deployment jobs
+          - download: current
+            artifact: manifests
+          - template: bootstrap.steps.yaml
+
           - reviewApp: default
 
           - task: Kubernetes@1
