@@ -10,5 +10,5 @@ stages:
       - template: deploy.jobs.yaml
         parameters:
           azdsEnabled: true
-          environment: Development
-          resource: dev
+          environment: levipljrestaurant
+          resource: default

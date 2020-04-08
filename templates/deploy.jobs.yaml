@@ -11,7 +11,8 @@ jobs:
     displayName: Deploy
     pool:
       vmImage: ${{parameters.vmImageName}}
-    environment: 'levipljrestaurant.default'
+    # environment: 'levipljrestaurant.default'
+    environment: '${{parameters.environment}}.${{parameters.resource}}'
     strategy:
       runOnce:
         deploy:
