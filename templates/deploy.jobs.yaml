@@ -22,6 +22,8 @@ jobs:
           # not downloaded for non-deployment jobs
           - download: current
             artifact: manifests
+          - download: current
+            artifact: scripts
           - template: bootstrap.steps.yaml
 
           - task: KubernetesManifest@0
