@@ -10,7 +10,7 @@ pr: none
 pool:
   vmImage: 'ubuntu-latest'
 
- variables:
+variables:
   - name: Project.Name
     value: restaurant
 
