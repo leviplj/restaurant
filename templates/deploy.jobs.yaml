@@ -3,7 +3,7 @@ parameters:
   azdsSpace: $(AZDS.Space)
   helmNamespace: $(Helm.Namespace)
   helmRelease: $(Helm.Release)
-  vmImageName: '$(Pipeline.VMImageName)'
+  vmImageName: $(Pipeline.VMImageName)
 
 jobs:
   - deployment: Deploy
@@ -39,7 +39,7 @@ jobs:
     displayName: Deploy Pull request
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
     pool:
-      vmImage: $(vmImageName)
+      vmImage: ${{parameters.vmImageName}}
 
     # environment: 'levipljrestaurant.$(k8sNamespaceForPR)'
     environment: '${{parameters.environment}}.${{parameters.resource}}'
