@@ -21,9 +21,13 @@ jobs:
           # We need to download scripts as they are
           # not downloaded for non-deployment jobs
           - download: current
+            displayName: Download Manifests Artifact
             artifact: manifests
+
           - download: current
+            displayName: Download Scripts Artifact
             artifact: scripts
+
           - template: bootstrap.steps.yaml
 
           - task: KubernetesManifest@0
