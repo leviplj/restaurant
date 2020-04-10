@@ -14,7 +14,7 @@ spec:
       spec:
         containers:
         - name: restaurant
-          image:  levipljacr.azurecr.io/restaurant:latest
+          image:  foodinn.azurecr.io/restaurant:latest
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
