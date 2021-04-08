@@ -7,7 +7,7 @@ certifi==2019.6.16
 cffi==1.12.3
 chardet==3.0.4
 cryptography==2.7
-Django==2.2.10
+Django==2.2.20
 docker==3.7.3
 docker-pycreds==0.4.0
 dockerpty==0.4.1
